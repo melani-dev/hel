@@ -1,0 +1,824 @@
+Q
+Represent the following statements in Prolog.
+ • Malith owns a mobile.
+owns(malith,mobile).
+ • X is smart if he/she owns a mobile.
+smart(X):- owns(X,mobile).
+ • X is the son of Y if X is male and Y is a parent of X.
+son(X,Y):- male(X), parent(Y,X).
+ • Shanka and Shagana are married.
+married(shanaka,shagana).
+ • Shagana kills everyone who gives Shanka a foot message.
+kils(shangana,X):- foot_message(X,shanka).
+ • Barath loves everyone who is a good programmer. 
+loves(barath,X) :- good_programmer(X).
+• Utpala eats anything that is nutritious or tasty.
+eats(uthpala,X) :- nutritious(X); tasty(X).
+
+
+Q
+The mother or father of someone is a parent of that person. Someone’s parents or grandparents are his or her ancestors. If some person X is a parent of either the mother or the father of some person Y, then X is a grandparent of Y. Two people are siblings if both have the same mother and the same father.
+
+parent(X,Y) :- mother(X,Y); father(X,Y).
+grandparent(X,Y) :- parent(X,Z),parent(Z,Y).
+sibilings(X,Y) :- parent(Z,X), parent(Z,Y).
+ancestor(X,Y) :- parent(X,Y); grandparent(X,Y).
+
+Q
+Use the predicates male/1, female/1, and parent_of/2 to represent the 
+following family tree as a Prolog knowledge base.
+Now, formulate rules to capture the following relationships:
+ • father_of(Father,Child) and mother_of(Mother,Child)
+ • grandfather_of(Grandfather,Child) andgrandmother_of(Grandmother,Child)
+ • sister_of(Sister,Person)
+ • aunt_of(Aunt,Person) and uncle_of(Uncle,Person)
+ b) Hint: In the family tree the letters in the brackets are indicate the following
+ F:- Father 
+M:- Mother
+ D:- Daughter
+ S:- Son
+ M/D:- Mother and Daughter
+ F/S:- Father and Son
+
+
+male(donald).
+female(aniya).
+male(regan).
+female(roshi).
+male(john).
+female(melaniya).
+female(andriya).
+male(newton).
+male(harry).
+male(william).
+
+father_of(donald,melaniya).
+father_of(donald,andriya).
+mother_of(aniya,melaniya).
+mother_of(aniya,andriya).
+mother_of(melaniya,harry).
+father_of(john,harry).
+father_of(newton,william).
+mother_of(andriya,william).
+father_of(regan,newton).
+mother_of(roshi,newton).
+
+grandfather_of(donald,harry).
+grandfather_of(donald,william).
+grandmother_of(aniya,harry).
+grandmother_of(aniya,william).
+
+sister_of(melaniya,andriya).
+
+aunt_of(melaniya,william).
+aunt_of(andriya,harry).
+
+grandparent(X,Y):- grandfather_of(X,Z), grandmother_of(Z,Y).
+
+
+i. Does William have an aunt? Who?
+aunt_of(X,william).
+X = melaniya.
+
+ii. Who are the grandparents of William?
+grandparent(X,william).
+iii. Who are the grandchildren of Donald and Aniya?
+grandchildren(X,donald)|grandchildren(X,aniya).
+iv. Does Newton have a sister?
+sister(X,newton).
+
+
+Q
+day(sunday).
+day(monday).
+day(tuesday).
+day(wednesday).
+day(thursday).
+day(friday).
+no_office(saturday).
+no_office(sunday).
+take_leave(monday).
+visit_mom(X):- no_office(X), take_leave(X).
+working_day(X):- no_office(X)| take_leave(X).
+
+Interpret the following queries produce by the above program.
+
+(i). day(“Holiday”).
+day(Holiday).
+Holiday = sunday ;
+Holiday = monday ;
+Holiday = tuesday ;
+Holiday = wednesday ;
+Holiday = thursday ;
+Holiday = friday.
+
+(ii). day(X).
+ day(X).
+X = sunday ;
+X = monday ;
+X = tuesday ;
+X = wednesday ;
+X = thursday ;
+X = friday.
+
+(iii). visit_mom(X).
+visit_mom(X).
+X = saturday ;
+X = sunday ;
+X = monday.
+
+(iv). Interpret the output of the query visit_mom(X) after changing the rule for
+visit_mom(X) as given below.
+visit_mom(X):- no_office(X), take_leave(X).
+
+visit_mom(X):- no_office(X), take_leave(X).
+visit_mom(X).
+false.
+
+(v). Define new rule working_day(X) to detect the days that are not holidays.
+working_day(X):- no_office(X)| take_leave(X).
+working_day(X).
+X = saturday ;
+X = sunday ;
+X = monday.
+
+
+Q2
+Gen 1	Dicky
+Gen 2	Oliver Sophie
+Gen 3	Anne Mike Jack Rose
+Gen 4	 George
+
+
+male(dicky).
+male(oliver).
+male(jack).
+male(george).
+
+female(anne).
+female(rose).
+female(sophie).
+
+parent(dicky, oliver).
+parent(dicky, sophie).
+parent(oliver, anne).
+parent(oliver, mike).
+parent(oliver, jack).
+parent(sophie, rose).
+parent(rose, george).
+
+father(X, Y) :- male(X), parent(X, Y).
+mother(X, Y) :- female(X), parent(X, Y).
+
+sister(X, Y) :- female(X), parent(Z, X), parent(Z, Y), X \= Y.
+brother(X, Y) :- male(X), parent(Z, X), parent(Z, Y), X \= Y.
+
+grandmother(X, Y) :- female(X), parent(X, Z), parent(Z, Y).
+grandfather(X, Y) :- male(X), parent(X, Z), parent(Z, Y).
+
+ancestor(X, Y) :- parent(X, Y).
+ancestor(X, Y) :- parent(X, Z), ancestor(Z, Y).
+
+cousin(X, Y) :- parent(Z1, X), parent(Z2, Y), sibling(Z1, Z2), X \= Y.
+
+uncle(X, Y) :- male(X), sibling(X, Z), parent(Z, Y).
+aunt(X, Y) :- female(X), sibling(X, Z), parent(Z, Y).
+
+son(X, Y) :- male(X), parent(Y, X).
+daughter(X, Y) :- female(X), parent(Y, X).
+
+
+sibling(X, Y) :- parent(Z, X), parent(Z, Y), X \= Y.
+
+(a). Was George the parent of Oliver? 
+parent(george,oliver).
+ false.
+ (b). Who was Oilver’s Parent? 
+parent(X,oliver).
+ X = dicky.
+ (c). Who were the children of Oilver?
+ parent(oliver,X).
+ X = anne ;
+ X = mike ;
+ X = jack.
+ (d). Who were the Brothers of Anne?
+ brother(X,anne).
+ X = jack ;
+ (e). Who were the Cousins of Rose?
+ cousin(X,rose).
+ X = anne ;
+ X = mike ;
+ X = jack ;
+
+
+
+Q3
+Write suitable prolog program to rotate a list N places to the left. 
+Sample Queries and Outputs 
+?- rotate([a,b,c,d,e,f,g,h],3,X). 
+X = [d,e,f,g,h,a,b,c] 
+?- rotate([a,b,c,d,e,f,g,h],-2,X). 
+X = [g,h,a,b,c,d,e,f]
+
+
+% rotate(List, N, Rotated) succeeds if Rotated is the list obtained by rotating List N places to the left
+rotate(List, N, Rotated) :-
+    length(List, Len),
+    N1 is N mod Len,       % Ensure N is within the length of the list
+    (   N1 >= 0
+    ->  rotate_left(List, N1, Rotated)
+    ;   N2 is Len + N1,
+        rotate_left(List, N2, Rotated)
+    ).
+
+% rotate_left(List, N, Rotated) succeeds if Rotated is the list obtained by rotating List N places to the left
+rotate_left(List, 0, List).
+rotate_left([H|T], N, Rotated) :-
+    N > 0,
+    append(T, [H], NewList),
+    N1 is N - 1,
+    rotate_left(NewList, N1, Rotated).
+
+
+list contais numbers.
+
+contains_number([]) :- false.
+contains_number([Head|_]) :- number(Head).
+contains_number([_|Tail]) :- contains_number(Tail).
+
+
+remove para
+
+remove_parentheses([], []).
+remove_parentheses([X|Xs], Result) :-
+    is_list(X),
+    !,
+    remove_parentheses(X, Xs1),
+    remove_parentheses(Xs, Xs2),
+    append(Xs1, Xs2, Result).
+remove_parentheses([X|Xs], [X|Result]) :-
+    atomic(X),
+    remove_parentheses(Xs, Result).
+
+
+
+
+Q4
+Write Prolog programs for the following mathematical calculations. Head of each Prolog clause is 
+given with the curly brackets.  
+(a). To find the square root of any positive real number, N. { squareroot(N):-}  
+
+squareroot(N, Result) :- N >= 0,
+    			 Result is sqrt(N).
+
+(b). To find the area of a circle, A, with the radius R. {area(R,A):-}  
+
+area(R, A) :- A is pi * R * R.
+
+(c). To find the length, L, between two points (X1, Y1) and (X2, Y2). 
+{length(X1,Y1,X2,Y2,L):-}  
+
+length(X1, Y1, X2, Y2, L) :- L is sqrt((X2 - X1) * (X2 - X1) + (Y2 - Y1) * (Y2 - Y1)).
+
+(d). To find the gradient, m, of a line segment with end coordinates of (X1, Y1), (X2, Y2). 
+{gradient(X1,Y1,X2,Y2,m):-}  
+
+gradient(X1, Y1, X2, Y2, M) :- X2 \= X1, % Avoid division by zero
+    				M is (Y2 - Y1) / (X2 - X1).
+
+(e). To find whether two line segments are perpendicular.  
+{perpen(X11,Y11,X12,Y12,X21,Y21,X22,Y22):-} 
+
+perpen(X11, Y11, X12, Y12, X21, Y21, X22, Y22) :-   DX1 is X12 - X11,
+						    DY1 is Y12 - Y11,
+						    DX2 is X22 - X21,
+						    DY2 is Y22 - Y21,
+						    DotProduct is DX1 * DX2 + DY1 * DY2,
+    						    DotProduct =:= 0. % If the dot product of the two vectors is zero, they are perpendicular. 
+
+
+Q
+Q2. Define a predicate to output the values of the squares of the integers N1 to 
+N2 inclusive and test it with N1=6 and N2=12.
+
+% square_range(N1, N2) succeeds by printing the squares of all integers from N1 to N2 inclusive.
+square_range(N1, N2) :-
+    N1 =< N2,
+    Square is N1 * N1,
+    write(Square), nl,
+    Next is N1 + 1,
+    square_range(Next, N2).
+square_range(N1, N2) :-
+    N1 > N2.
+
+% Test with N1 = 6 and N2 = 12
+?- square_range(6, 12).
+
+ Q3. Define a test predicate to read a serious of characters input by the user and 
+output all of those before the first newline or ? Character.
+
+% read_until_newline_or_questionmark/0 reads characters and outputs them until it encounters a newline or '?' character.
+read_until_newline_or_questionmark :-
+    get_char(Char),
+    (   Char = '\n'
+    ;   Char = '?'
+    ->  true
+    ;   write(Char),
+        read_until_newline_or_questionmark
+    ).
+
+% Test the predicate
+?- read_until_newline_or_questionmark.
+
+
+ Q4. This example of program below is designed to search database containing 
+clauses representing the name, age, places of residence, and occupation of a 
+number of people.
+ The database contains these values :
+ person(john,smith,45,london,doctor).
+ person(martin,williams,33,birmingham,teacher).
+ person(henry,smith,26,manchester,plumber).
+ person(jane,wilson,62,london,teacher).
+ person(mary,smith,29,glasgow,surveyor).
+
+
+
+ (a) Define a predicate somepeople below is to search the person in the database 
+which surname is smith.
+ Sample Query:
+ ?- somepeople.
+ Output
+ john smith
+ henry smith
+ mary smith
+ True
+
+% Define the person database
+person(john, smith, 45, london, doctor).
+person(martin, williams, 33, birmingham, teacher).
+person(henry, smith, 26, manchester, plumber).
+person(jane, wilson, 62, london, teacher).
+person(mary, smith, 29, glasgow, surveyor).
+
+% somepeople/0 succeeds by printing the names of people with the surname 'smith'.
+somepeople :-
+    person(FirstName, smith, _, _, _),
+    write(FirstName), write(' smith'), nl,
+    fail.
+somepeople.
+
+% Sample Query:
+% ?- somepeople.
+
+ (b) Using the person clause given in Q4 find the professions of all those over age 
+30.
+
+% over_30_professions/0 succeeds by printing the professions of people over age 30.
+over_30_professions :-
+    person(_, _, Age, _, Profession),
+    Age > 30,
+    write(Profession), nl,
+    fail.
+over_30_professions.
+
+% Sample Query:
+% ?- over_30_professions.
+
+
+Q
+disjunction & conjunction
+parent(jhon,bob).
+ parent(lili,bob).
+ male(jhon).
+ female(lili).
+ %Conjunction Logic
+ father(X,Y) :- parent(X,Y),male(X).
+ mother(X,Y) :- parent(X,Y),female(X).
+ %Disjunction Logic
+ child_of(X,Y) :- father(X,Y);mother(X,Y).
+
+Q
+Try the following Prolog program and try the sample query below.
+ Assume given a set of facts of the form father(name1,name2) (name1 is the father of name2).
+father(a, b).  % 1                 
+father(a, c).  % 2
+father(b, d).  % 3
+father(b, e).  % 4
+father(c, f).  % 5
+
+
+ a) Define a predicate brother(X,Y) which holds iff X and Y are brothers.
+% brother(X, Y) holds if X and Y have the same father and are not the same person
+brother(X, Y) :-
+    father(F, X),
+    father(F, Y),
+    X \= Y.
+
+
+ b) Define a predicate cousin(X,Y) which holds iff X and Y are cousins.
+% cousin(X, Y) holds if X and Y's fathers are brothers
+cousin(X, Y) :-
+    father(F1, X),
+    father(F2, Y),
+    brother(F1, F2).
+
+
+ c) Define a predicate grandson(X,Y) which holds iff X is a grandson of Y.
+% grandson(X, Y) holds if Y is the father of a parent of X
+grandson(X, Y) :-
+    father(Y, Z),
+    father(Z, X).
+
+
+ d) Define a predicate descendent(X,Y) which holds iff X is a descendent of Y.
+% descendent(X, Y) holds if X is a child of Y or a descendent of Y's children
+descendent(X, Y) :-
+    father(Y, X).
+descendent(X, Y) :-
+    father(Y, Z),
+    descendent(X, Z).
+
+ e) Consider the following genealogical tree:
+ father(a,b).  % 1                 
+father(a,c).  % 2
+ father(b,d).  % 3
+ father(b,e).  % 4
+ father(c,f).  % 5
+
+whose graphical representation is:
+           a
+   ↓           ↓
+   b           c
+ ↓   ↓         ↓
+d   e         f
+ Say which answers, and in which order, are generated by your definitions for the queries
+ ?- brother(X,Y).
+ ?- cousin(X,Y).
+ ?- grandson(X,Y).
+ ?- descendent(X,Y).
+
+
+
+
+..............................
+list
+list member
+
+list_member(X,[X| _ ]).    % member(X, [Head|Tail]) is true if X = Head  % that is, if X is the head of the list  
+list_member(X,[ _ |TAIL]) :- list_member(X,TAIL).
+ 
+% or if X is a member of Tail,
+ % ie. if member(X, Tail) is true.
+
+ Query 1: list_member(b,[a,b,c]).
+ Output
+ yes
+ Query 2: list_member(b,[a,[b,c]]).
+ Output
+ no
+ Query 3: list_member([b,c],[a,[b,c]]).
+ Output
+ yes
+ Query 4: list_member(d,[a,b,c]).
+ Output
+ no
+
+list length
+
+list_length([ ],0).
+ list_length([ _ |TAIL],N) :- list_length(TAIL,N1), N is N1 + 1.
+
+ The above code can also be written as 
+list_length([ ], 0).
+ list_length([ _ |A],B):-list_length(A,C),B is C+1.
+
+ Query 1: list_length([a,b,c,d,e,f,g,h,i,j],Len).
+ Output
+ Len = 10
+ Query 2: list_length([],Len)
+ Output
+ Len = 0
+ Query 3: list_length([[a,b],[c,d],[e,f]],Len).
+ Output
+ Len = 3
+ Query 4: length([ ], L).
+ Output
+ L=0
+
+list concat
+
+ list_concat([],L,L).
+ list_concat([X1|L1],L2,[X1|L3]) :- list_concat(L1,L2,L3).
+ Query 1: list_concat([1,2],[a,b,c],NewList).
+ Output
+ NewList = [1,2,a,b,c]
+ Query 2: list_concat([],[a,b,c],NewList).
+ Output
+ NewList = [a,b,c]
+ Query 3: list_concat([a,b,c],[a,b,c],NewList).
+ Output
+ NewList = [a,b,c,a,b,c]
+ Query 4: list_concat([],L,[a,b,c,d,e,f,g,h]).
+ Output
+ L = [a,b,c,d,e,f,g,h]
+ Query 5: list_concat([a,b,c],[],L). 
+Output
+ L = [a,b,c]
+ Query 6: list_concat([],[],L).
+ Output
+ L = []
+
+sum of list
+
+sumlist([], 0).
+sumlist([H|T],N) :- sumlist(T,N1), N is N1+H.
+
+delete from list
+
+ list_delete(X, [X], []).
+ list_delete(X,[X|L1], L1).
+ list_delete(X, [Y|L2], [Y|L1]) :- list_delete(X,L2,L1).
+
+ Query 1: list_delete(a,[a,e,i,o,u],NewList).
+ Output
+ NewList = [e,i,o,u]
+
+if list is sorted
+
+is_sorted([]).
+is_sorted([_]).
+is_sorted([X,Y|T]) :- X=<Y, is_sorted([Y|T]).
+
+
+
+appended to list
+
+ list_member(X,[X|_]).
+ list_member(X,[_|TAIL]) :- list_member(X,TAIL).
+ list_append(A,T,T) :- list_member(A,T),!.
+ list_append(A,T,[A|T]).
+
+Query 1: list_append(a,[e,i,o,u],NewList).
+ Output
+ NewList = [a,e,i,o,u]
+
+insert to list
+
+list_delete(X, [X], []).
+ list_delete(X,[X|L1], L1).
+ list_delete(X, [Y|L2], [Y|L1]) :- list_delete(X,L2,L1).
+ list_insert(X,L,R) :- list_delete(X,R,L).
+
+ Query 1: list_insert(a,[e,i,o,u],NewList).
+ Output
+ NewList = [a,e,i,o,u] ? a
+ NewList = [e,a,i,o,u]
+ NewList = [e,i,a,o,u]
+ NewList = [e,i,o,a,u]
+ NewList = [e,i,o,u,a]
+ NewList = [e,i,o,u,a]
+
+
+permutation Program:
+ 
+list_delete(X,[X|L1], L1).  
+list_delete(X, [Y|L2], [Y|L1]) :- list_delete(X,L2,L1).  
+list_perm([],[]).  
+list_perm(L,[X|P]) :- list_delete(X,L,L1),list_perm(L1,P).
+
+list_perm([a,b,c,d],X).  
+X = [a,b,c,d] ? a  
+X = [a,b,d,c]  
+X = [a,c,b,d]  
+X = [a,c,d,b]  
+X = [a,d,b,c]  
+X = [a,d,c,b]  
+X = [b,a,c,d]  
+X = [b,a,d,c]  
+X = [b,c,a,d] 
+X = [b,c,d,a]  
+X = [b,d,a,c]  
+X = [b,d,c,a]  
+X = [c,a,b,d]  
+X = [c,a,d,b]  
+X = [c,b,a,d]  
+X = [c,b,d,a]  
+X = [c,d,a,b]  
+X = [c,d,b,a]  
+X = [d,a,b,c]  
+X = [d,a,c,b]  
+X = [d,b,a,c]  
+X = [d,b,c,a]  
+X = [d,c,a,b]  
+X = [d,c,b,a]  
+(31 ms) no  
+| ?- 
+
+
+shift Program: 
+
+list_concat([],L,L).  
+list_concat([X1|L1],L2,[X1|L3]) :- list_concat(L1,L2,L3).  
+list_shift([Head|Tail],Shifted) :- list_concat(Tail, [Head],Shifted). 
+
+Output: 
+| ?- list_shift([a,b,c,d,e],L2).  
+L2 = [b,c,d,e,a]  
+(16 ms) yes  
+| ?- list_shift([a,b,c,d,e],[b,c,d,e,a]).  
+yes  
+| ?-
+
+
+formula:-write('Enter the formula number: '),read(N),nl,proces(1,N).
+proces(I,N):-I<11, 
+		write(I), 
+		write(' X '),write(N),write('= '), 
+		C is I*N,write(C),nl,I1 is I+1,proces(I1,N).
+
+%check : formula.
+
+
+% Bubble sort 
+bbs(L,SL):-swap(L,L1),!,bbs(L1,SL). 
+bbs(S,S). 
+swap([X,Y|R],[Y,X|R]):-gt(X,Y). 
+swap([Z|R],[Z|R1]):-swap(R,R1). 
+gt(X,Y):-X>Y. 
+
+% insertion sort 
+ins([],[]). 
+ins([X|T],SL):-ins(T,ST),insert(X,ST,SL). 
+insert(X,[Y|SL],[Y|SL1]):-gt(X,Y),!,insert(X,SL,SL1). 
+insert(X,SL,[X|SL]). 
+
+%Quick sort 
+
+qs([],[]). 
+qs([X|T],SL):-split(X,T,Small,Big),qs(Small,SS),qs(Big,SB),conc(SS,[X|SB],SL).  
+split(X,[],[],[]). 
+split(X,[Y|T],[Y|Small],Big):- gt(X,Y),!,split(X,T,Small,Big). 
+split(X,[Y|T],Small,[Y|Big]):-split(X,T,Small,Big).
+
+
+Define a predicate to output the values of the squares of the integers N1 to 
+N2 inclusive and test it with N1=6 and N2=12.
+
+testloop(N):-N>=6,write("square of "),write(N),write(" is "),N1=N*N,write(N1),nl,M=N-1,testloop(M).
+
+
+Define a test predicate to read a serious of characters input by the user and 
+output all of those before the first newline or ? Character.
+
+% read_until_special/1 reads characters until a newline or '?' is encountered.
+read_until_special :- 
+    get_char(Char),
+    ( Char = '\n' ; Char = '?' ), !.
+read_until_special :- 
+    get_char(Char),
+    write(Char),
+    read_until_special.
+
+% Test case
+:- read_until_special.
+
+
+18/19
+
+Q1.
+% Facts
+super(Daniel, lisa).
+super(Daniel, stewie).
+super(lisa, peter).
+super(lisa, marge).
+super(lisa, maggie).
+super(stewie, luis).
+super(stewie, peter).
+super(lois, mog).
+super(peter, brian).
+super(marge, clais).
+super(marge, bart).
+
+% (a) Procedure that gives the names of a supervisor and his or her student
+supervisor_and_student(Supervisor, Student) :-
+    super(Supervisor, Student).
+
+% (b) Rule that gives the names of a student and supervisors where the student is jointly supervised by two supervisors
+jointly_supervised(Student, Supervisor1, Supervisor2) :-
+    super(Supervisor1, Student),
+    super(Supervisor2, Student),
+    Supervisor1 \= Supervisor2.
+
+% (c) Rule that gives the names of two students who share the same supervisor
+shared_supervisor(Student1, Student2, Supervisor) :-
+    super(Supervisor, Student1),
+    super(Supervisor, Student2),
+    Student1 \= Student2.
+
+% (d) Rule that gives the names of two students who have different supervisors who themselves both had the same supervisor
+supervisor_grandstudent(Student1, Student2, CommonSupervisor) :-
+    super(Supervisor1, Student1),
+    super(Supervisor2, Student2),
+    super(CommonSupervisor, Supervisor1),
+    super(CommonSupervisor, Supervisor2),
+    Student1 \= Student2,
+    Supervisor1 \= Supervisor2.
+
+Q2.
+male(fedrik).
+male(prigozhin).
+male(thomas).
+male(bose).
+male(daniel).
+male(zelenski).
+
+female(linda).
+female(barbara).
+female(ella).
+female(elizabath).
+
+%parent_of(Parent,Child)
+
+parent_of(fedrik,ella).
+parent_of(linda,ella).
+parent_of(fedrik,elizabath).
+parent_of(linda,elizabath).
+parent_of(prigozhin,thomas).
+parent_of(ella,thomas).
+parent_of(zelenski,daniel).
+parent_of(barbara,daniel).
+parent_of(elizabath,bose).
+parent_of(daniel,bose).
+
+
+% Rules
+father_of(Father, Child) :-
+    male(Father),
+    parent_of(Father, Child).
+
+mother_of(Mother, Child) :-
+    female(Mother),
+    parent_of(Mother, Child).
+
+grandfather_of(Grandfather, Child) :-
+    male(Grandfather),
+    parent_of(Grandfather, Parent),
+    parent_of(Parent, Child).
+
+grandmother_of(Grandmother, Child) :-
+    female(Grandmother),
+    parent_of(Grandmother, Parent),
+    parent_of(Parent, Child).
+
+sister_of(Sister, Person) :-
+    female(Sister),
+    parent_of(Parent, Sister),
+    parent_of(Parent, Person),
+    Sister \= Person.
+
+aunt_of(Aunt, Person) :-
+    female(Aunt),
+    parent_of(Parent, Person),
+    sister_of(Aunt, Parent).
+
+uncle_of(Uncle, Person) :-
+    male(Uncle),
+    parent_of(Parent, Person),
+    brother_of(Uncle, Parent).
+
+brother_of(Brother, Person) :-
+    male(Brother),
+    parent_of(Parent, Brother),
+    parent_of(Parent, Person),
+    Brother \= Person.
+
+
+aunt_of(Aunt, bose).
+
+
+grandfather_of(Grandfather, bose).
+grandmother_of(Grandmother, bose).
+
+
+grandfather_of(fedrik, Grandchild).
+grandmother_of(linda, Grandchild).
+
+
+sister_of(Sister, daniel).
+
+
+i) does Bose have an aunt?
+aunt_of(X,Bose).
+ii) who are the grandparents of Bose?
+?- grandfather_of(Grandfather, bose).
+?- grandmother_of(Grandmother, bose).
+
+iii) who are the grandchildren of fedrik & linda?
+?- grandfather_of(fedrik, Grandchild).
+?- grandmother_of(linda, Grandchild).
+
+iv) does daniel have a sister?
+?- sister_of(Sister, daniel).
+
+
+Q3.
